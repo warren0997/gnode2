@@ -1,0 +1,605 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="apple-touch-icon"
+      type="image/png"
+      href="https://static.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png"
+    />
+    <meta name="apple-mobile-web-app-title" content="CodePen" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico"
+    />
+    <link
+      rel="mask-icon"
+      type=""
+      href="https://static.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg"
+      color="#111"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <title>5G Cell ID Generator</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css" />
+    <link rel="stylesheet" href="assets/css/Highlight-Blue.css" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <title>CodePen - UI #2 - Search Bar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      @import url("https://fonts.googleapis.com/css?family=Inconsolata:700");
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+      }
+
+      body {
+        background: #252525;
+      }
+
+      .container {
+        position: absolute;
+        margin-top: 15px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 300px;
+        height: 100px;
+      }
+      .container .search {
+        position: absolute;
+        margin: auto;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 80px;
+        height: 80px;
+        background: #007bff;
+        border-radius: 50%;
+        transition: all 1s;
+        z-index: 4;
+        box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.4);
+      }
+      .container .search:hover {
+        cursor: pointer;
+      }
+      .container .search::before {
+        content: "";
+        position: absolute;
+        margin: auto;
+        top: 22px;
+        right: 0;
+        bottom: 0;
+        left: 22px;
+        width: 12px;
+        height: 2px;
+        background: white;
+        transform: rotate(45deg);
+        transition: all 0.5s;
+      }
+      .container .search::after {
+        content: "";
+        position: absolute;
+        margin: auto;
+        top: -5px;
+        right: 0;
+        bottom: 0;
+        left: -5px;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        border: 2px solid white;
+        transition: all 0.5s;
+      }
+      .container input {
+        font-family: "Inconsolata", monospace;
+        position: absolute;
+        margin: auto;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 50px;
+        outline: none;
+        border: none;
+        background: #007bff;
+        color: white;
+        text-shadow: 0 0 10px #007bff;
+        padding: 0 80px 0 20px;
+        border-radius: 30px;
+        box-shadow: 0 0 25px 0 #007bff, 0 20px 25px 0 rgba(0, 0, 0, 0.2);
+        transition: all 1s;
+        opacity: 0;
+        z-index: 5;
+        font-weight: bolder;
+        letter-spacing: 0.1em;
+      }
+      .container input:hover {
+        cursor: pointer;
+      }
+      .container input:focus {
+        width: 300px;
+        opacity: 1;
+        cursor: text;
+      }
+      .container input:focus ~ .search {
+        right: -250px;
+        background: #151515;
+        z-index: 6;
+      }
+      .container input:focus ~ .search::before {
+        top: 0;
+        left: 0;
+        width: 25px;
+      }
+      .container input:focus ~ .search::after {
+        top: 0;
+        left: 0;
+        width: 25px;
+        height: 2px;
+        border: none;
+        background: white;
+        border-radius: 0%;
+        transform: rotate(-45deg);
+      }
+      .container input::placeholder {
+        color: white;
+        opacity: 0.5;
+        font-weight: bolder;
+      }
+      .highlight-blue {
+        color: #fff;
+        background-color: #1e6add;
+        margin-top: 100px !important;
+        padding: 0 !important;
+      }
+    </style>
+    <script>
+      window.console = window.console || function(t) {};
+    </script>
+    <script>
+      if (document.location.search.match(/type=embed/gi)) {
+        window.parent.postMessage("resize", "*");
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <input type="search" id="search-input" placeholder="Cell ID on CPE" />
+      <div class="search"></div>
+      <div id="search-results" class="highlight-blue"></div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript">
+      var people = [
+        {
+          gNodeB_ID: "832140-003",
+          Cell_ID: "136227843"
+        },
+        {
+          gNodeB_ID: "832140-013",
+          Cell_ID: "136227853"
+        },
+        {
+          gNodeB_ID: "837818-001",
+          Cell_ID: "137681409"
+        },
+        {
+          gNodeB_ID: "837818-011",
+          Cell_ID: "137681419"
+        },
+        {
+          gNodeB_ID: "837818-002",
+          Cell_ID: "137681410"
+        },
+        {
+          gNodeB_ID: "837818-012",
+          Cell_ID: "137681420"
+        },
+        {
+          gNodeB_ID: "830829-002",
+          Cell_ID: "135892226"
+        },
+        {
+          gNodeB_ID: "830829-012",
+          Cell_ID: "135892236"
+        },
+        {
+          gNodeB_ID: "830829-003",
+          Cell_ID: "135892227"
+        },
+        {
+          gNodeB_ID: "830829-013",
+          Cell_ID: "135892237"
+        },
+        {
+          gNodeB_ID: "837540-001",
+          Cell_ID: "137610241"
+        },
+        {
+          gNodeB_ID: "837540-011",
+          Cell_ID: "137610251"
+        },
+        {
+          gNodeB_ID: "837540-002",
+          Cell_ID: "137610242"
+        },
+        {
+          gNodeB_ID: "837540-012",
+          Cell_ID: "137610252"
+        },
+        {
+          gNodeB_ID: "830126-001",
+          Cell_ID: "135712258"
+        },
+        {
+          gNodeB_ID: "830126-012",
+          Cell_ID: "135712268"
+        },
+        {
+          gNodeB_ID: "830126-102",
+          Cell_ID: "135712358"
+        },
+        {
+          gNodeB_ID: "830126-112",
+          Cell_ID: "135712368"
+        },
+        {
+          gNodeB_ID: "832174-001",
+          Cell_ID: "136236545"
+        },
+        {
+          gNodeB_ID: "832174-011",
+          Cell_ID: "136236555"
+        },
+        {
+          gNodeB_ID: "832174-101",
+          Cell_ID: "136236645"
+        },
+        {
+          gNodeB_ID: "832174-111",
+          Cell_ID: "136236655"
+        },
+        {
+          gNodeB_ID: "832174-002",
+          Cell_ID: "136236546"
+        },
+        {
+          gNodeB_ID: "832174-012",
+          Cell_ID: "136236556"
+        },
+        {
+          gNodeB_ID: "832174-102",
+          Cell_ID: "136236646"
+        },
+        {
+          gNodeB_ID: "832174-112",
+          Cell_ID: "136236656"
+        },
+        {
+          gNodeB_ID: "832174-003",
+          Cell_ID: "136236547"
+        },
+        {
+          gNodeB_ID: "832174-013",
+          Cell_ID: "136236557"
+        },
+        {
+          gNodeB_ID: "832174-103",
+          Cell_ID: "136236647"
+        },
+        {
+          gNodeB_ID: "832174-113",
+          Cell_ID: "136236657"
+        },
+        {
+          gNodeB_ID: "830253-001",
+          Cell_ID: "135744769"
+        },
+        {
+          gNodeB_ID: "830253-011",
+          Cell_ID: "135744779"
+        },
+        {
+          gNodeB_ID: "832208-001",
+          Cell_ID: "136245249"
+        },
+        {
+          gNodeB_ID: "832208-011",
+          Cell_ID: "136245259"
+        },
+        {
+          gNodeB_ID: "832208-002",
+          Cell_ID: "136245250"
+        },
+        {
+          gNodeB_ID: "832208-012",
+          Cell_ID: "136245260"
+        },
+        {
+          gNodeB_ID: "832208-003",
+          Cell_ID: "136245251"
+        },
+        {
+          gNodeB_ID: "832208-013",
+          Cell_ID: "136245261"
+        },
+        {
+          gNodeB_ID: "832013-001",
+          Cell_ID: "136195329"
+        },
+        {
+          gNodeB_ID: "832013-011",
+          Cell_ID: "136195339"
+        },
+        {
+          gNodeB_ID: "837533-001",
+          Cell_ID: "137608449"
+        },
+        {
+          gNodeB_ID: "837533-011",
+          Cell_ID: "137608459"
+        },
+        {
+          gNodeB_ID: "837533-002",
+          Cell_ID: "137608450"
+        },
+        {
+          gNodeB_ID: "837533-012",
+          Cell_ID: "137608460"
+        },
+        {
+          gNodeB_ID: "837533-003",
+          Cell_ID: "137608451"
+        },
+        {
+          gNodeB_ID: "837533-013",
+          Cell_ID: "137608461"
+        },
+        {
+          gNodeB_ID: "830346-002",
+          Cell_ID: "135768578"
+        },
+        {
+          gNodeB_ID: "830346-012",
+          Cell_ID: "135768588"
+        },
+        {
+          gNodeB_ID: "830346-003",
+          Cell_ID: "135768579"
+        },
+        {
+          gNodeB_ID: "830346-013",
+          Cell_ID: "135768589"
+        },
+        {
+          gNodeB_ID: "832140-3",
+          Cell_ID: "136227843"
+        },
+        {
+          gNodeB_ID: "832140-13",
+          Cell_ID: "136227853"
+        },
+        {
+          gNodeB_ID: "837818-1",
+          Cell_ID: "137681409"
+        },
+        {
+          gNodeB_ID: "837818-11",
+          Cell_ID: "137681419"
+        },
+        {
+          gNodeB_ID: "837818-2",
+          Cell_ID: "137681410"
+        },
+        {
+          gNodeB_ID: "837818-12",
+          Cell_ID: "137681420"
+        },
+        {
+          gNodeB_ID: "830829-2",
+          Cell_ID: "135892226"
+        },
+        {
+          gNodeB_ID: "830829-12",
+          Cell_ID: "135892236"
+        },
+        {
+          gNodeB_ID: "830829-3",
+          Cell_ID: "135892227"
+        },
+        {
+          gNodeB_ID: "830829-13",
+          Cell_ID: "135892237"
+        },
+        {
+          gNodeB_ID: "837540-1",
+          Cell_ID: "137610241"
+        },
+        {
+          gNodeB_ID: "837540-11",
+          Cell_ID: "137610251"
+        },
+        {
+          gNodeB_ID: "837540-2",
+          Cell_ID: "137610242"
+        },
+        {
+          gNodeB_ID: "837540-12",
+          Cell_ID: "137610252"
+        },
+        {
+          gNodeB_ID: "830126-1",
+          Cell_ID: "135712258"
+        },
+        {
+          gNodeB_ID: "830126-12",
+          Cell_ID: "135712268"
+        },
+        {
+          gNodeB_ID: "830126-102",
+          Cell_ID: "135712358"
+        },
+        {
+          gNodeB_ID: "830126-112",
+          Cell_ID: "135712368"
+        },
+        {
+          gNodeB_ID: "832174-1",
+          Cell_ID: "136236545"
+        },
+        {
+          gNodeB_ID: "832174-11",
+          Cell_ID: "136236555"
+        },
+        {
+          gNodeB_ID: "832174-101",
+          Cell_ID: "136236645"
+        },
+        {
+          gNodeB_ID: "832174-111",
+          Cell_ID: "136236655"
+        },
+        {
+          gNodeB_ID: "832174-2",
+          Cell_ID: "136236546"
+        },
+        {
+          gNodeB_ID: "832174-12",
+          Cell_ID: "136236556"
+        },
+        {
+          gNodeB_ID: "832174-102",
+          Cell_ID: "136236646"
+        },
+        {
+          gNodeB_ID: "832174-112",
+          Cell_ID: "136236656"
+        },
+        {
+          gNodeB_ID: "832174-3",
+          Cell_ID: "136236547"
+        },
+        {
+          gNodeB_ID: "832174-13",
+          Cell_ID: "136236557"
+        },
+        {
+          gNodeB_ID: "832174-103",
+          Cell_ID: "136236647"
+        },
+        {
+          gNodeB_ID: "832174-113",
+          Cell_ID: "136236657"
+        },
+        {
+          gNodeB_ID: "830253-1",
+          Cell_ID: "135744769"
+        },
+        {
+          gNodeB_ID: "830253-11",
+          Cell_ID: "135744779"
+        },
+        {
+          gNodeB_ID: "832208-1",
+          Cell_ID: "136245249"
+        },
+        {
+          gNodeB_ID: "832208-11",
+          Cell_ID: "136245259"
+        },
+        {
+          gNodeB_ID: "832208-2",
+          Cell_ID: "136245250"
+        },
+        {
+          gNodeB_ID: "832208-12",
+          Cell_ID: "136245260"
+        },
+        {
+          gNodeB_ID: "832208-3",
+          Cell_ID: "136245251"
+        },
+        {
+          gNodeB_ID: "832208-13",
+          Cell_ID: "136245261"
+        },
+        {
+          gNodeB_ID: "832013-1",
+          Cell_ID: "136195329"
+        },
+        {
+          gNodeB_ID: "832013-11",
+          Cell_ID: "136195339"
+        },
+        {
+          gNodeB_ID: "837533-1",
+          Cell_ID: "137608449"
+        },
+        {
+          gNodeB_ID: "837533-11",
+          Cell_ID: "137608459"
+        },
+        {
+          gNodeB_ID: "837533-2",
+          Cell_ID: "137608450"
+        },
+        {
+          gNodeB_ID: "837533-12",
+          Cell_ID: "137608460"
+        },
+        {
+          gNodeB_ID: "837533-3",
+          Cell_ID: "137608451"
+        },
+        {
+          gNodeB_ID: "837533-13",
+          Cell_ID: "137608461"
+        },
+        {
+          gNodeB_ID: "830346-2",
+          Cell_ID: "135768578"
+        },
+        {
+          gNodeB_ID: "830346-12",
+          Cell_ID: "135768588"
+        },
+        {
+          gNodeB_ID: "830346-3",
+          Cell_ID: "135768579"
+        },
+        {
+          gNodeB_ID: "830346-13",
+          Cell_ID: "135768589"
+        }
+      ];
+
+      $("#search-input").on("keyup", function() {
+        var searchFor = $("#search-input")
+          .val()
+          .toLowerCase();
+        var results = [];
+        for (var i = 0; i < people.length; i++) {
+          if (people[i].Cell_ID.toLowerCase().indexOf(searchFor) > -1)
+            results.push(people[i].gNodeB_ID);
+        }
+        if (results.length == 0) $("#search-results").html("No Results Found");
+        else $("#search-results").html(results.join("<br>"));
+      });
+    </script>
+  </body>
+</html>
