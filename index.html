@@ -44,6 +44,11 @@
         text-align: center;
       }
 
+      #search-results {
+        font-family: "Inconsolata", monospace;
+        font-size: xx-large;
+      }
+
       body {
         background: #252525;
       }
@@ -181,6 +186,7 @@
       <input
         type="search"
         id="search-input"
+        class="numberonly"
         placeholder="Type Cell ID on CPE"
       />
       <div class="search"></div>
@@ -600,8 +606,18 @@
           if (people[i].Cell_ID.toLowerCase().indexOf(searchFor) > -1)
             results.push(people[i].gNodeB_ID);
         }
-        if (results.length == 0) $("#search-results").html("No Results Found");
-        else $("#search-results").html(results.join("<br>"));
+        if (results.length === 0) {
+          $("#search-results").html("No Results Found");
+        } else $("#search-results").html(results.join("<br>"));
+      });
+
+      $(document).ready(function() {
+        $(".numberonly").focus(function() {
+          $(this).attr("type", "number");
+        });
+        $(".numberonly").blur(function() {
+          $(this).attr("type", "text");
+        });
       });
     </script>
   </body>
